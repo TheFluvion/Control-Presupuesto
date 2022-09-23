@@ -1,4 +1,5 @@
 import NuevoPresupuesto from "./NuevoPresupuesto"
+import ControlPresupuesto from "./ControlPresupuesto"
 
 export default function Header({ presupuesto, setPresupuesto, isValidPresupuesto, setIsValidPresupuesto }) {
 
@@ -6,7 +7,9 @@ export default function Header({ presupuesto, setPresupuesto, isValidPresupuesto
         <header>
             <h1>Planificador de Gastos</h1>
             {isValidPresupuesto
-                ? <div>control presupuesto</div>
+                ? <ControlPresupuesto
+                presupuesto={presupuesto}
+                ></ControlPresupuesto>
                 : <NuevoPresupuesto
                     presupuesto={presupuesto}
                     setPresupuesto={setPresupuesto}
