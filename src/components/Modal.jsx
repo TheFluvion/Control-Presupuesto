@@ -3,7 +3,7 @@ import CerrarModal from '../img/cerrar.svg'
 import Mensaje from './Mensaje'
 import { generarFecha, generarId } from '../helpers'
 
-export default function Modal({ setModal, animarModal, setAnimarModal, guardarGasto, gastoEditar, setGastoEditar }) {
+export default function Modal({ setModal, animarModal, setAnimarModal, guardarGasto, actualizarGastos, gastoEditar, setGastoEditar }) {
     const [nombre, setNombre] = useState('')
     const [cantidad, setCantidad] = useState('')
     const [categoria, setCategoria] = useState('')
@@ -37,7 +37,7 @@ export default function Modal({ setModal, animarModal, setAnimarModal, guardarGa
             return
         }
         if (gastoEditar.id) {
-            guardarGasto({ nombre, cantidad, categoria, id, fecha })
+            actualizarGastos({ nombre, cantidad, categoria, id, fecha })
         } else {
             const id = generarId()
             const fecha = generarFecha()

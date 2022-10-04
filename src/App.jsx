@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
+import Filtros from './components/Filtros'
 import Modal from './components/Modal'
 import IconoNuevoGasto from './img/nuevo-gasto.svg'
 import ListadoGastos from './components/ListadoGastos'
 
 export default function App() {
-  const [gastos, setGastos] = useState([])
-  const [presupuesto, setPresupuesto] = useState(0)
+  const [gastos, setGastos] = useState(
+    localStorage.getItem('gastos') ? JSON.parse(localStorage.getItem('gastos')) : [])
+  const [presupuesto, setPresupuesto] = useState(Number(localStorage.getItem('presupuesto')) || 0)
   const [isValidPresupuesto, setIsValidPresupuesto] = useState(false)
   const [modal, setModal] = useState(false)
   const [animarModal, setAnimarModal] = useState(false)
   const [gastoEditar, setGastoEditar] = useState({})
+  const [filtro, setFiltro] = useState('')
+  const [gastosFiltrados, setGastosFiltrados] = useState([])
 
   useEffect(() => {
     if (Object.keys(gastoEditar).length > 0) {
@@ -21,6 +25,27 @@ export default function App() {
     }
   }, [gastoEditar])
 
+  useEffect(() => {
+    localStorage.setItem('presupuesto', presupuesto)
+  }, [presupuesto])
+
+  useEffect(() => {
+    localStorage.setItem('gastos', JSON.stringify(gastos) || [])
+  }, [gastos])
+
+  useEffect(() => {
+    if (presupuesto > 0) {
+      setIsValidPresupuesto(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (filtro) {
+      const gastoFiltrado = gastos.filter(gasto => gasto.categoria === filtro)
+      setGastosFiltrados(gastoFiltrado)
+    }
+  }, [filtro])
+
   function handleNuevoGasto() {
     setModal(true)
     setGastoEditar({})
@@ -30,6 +55,10 @@ export default function App() {
   }
 
   function guardarGasto(gasto) {
+    setGastos([...gastos, gasto])
+  }
+
+  function actualizarGastos(gasto) {
     setGastos([...gastos, gasto])
     const gastosActualizados = gastos.map(gastoState => gastoState.id === gasto.id ? gasto : gastoState)
     setGastos(gastosActualizados)
@@ -44,6 +73,7 @@ export default function App() {
     <div className={modal ? 'fijar' : ''}>
       <Header
         gastos={gastos}
+        setGastos={setGastos}
         presupuesto={presupuesto}
         setPresupuesto={setPresupuesto}
         isValidPresupuesto={isValidPresupuesto}
@@ -53,10 +83,16 @@ export default function App() {
       {isValidPresupuesto &&
         <>
           <main>
+            <Filtros
+              filtro={filtro}
+              setFiltro={setFiltro}
+            />
             <ListadoGastos
               gastos={gastos}
               setGastoEditar={setGastoEditar}
               eliminarGasto={eliminarGasto}
+              filtro={filtro}
+              gastosFiltrados={gastosFiltrados}
             />
           </main>
           <div className='nuevo-gasto'>
@@ -75,6 +111,7 @@ export default function App() {
           animarModal={animarModal}
           setAnimarModal={setAnimarModal}
           guardarGasto={guardarGasto}
+          actualizarGastos={actualizarGastos}
           gastoEditar={gastoEditar}
           setGastoEditar={setGastoEditar}
         />
